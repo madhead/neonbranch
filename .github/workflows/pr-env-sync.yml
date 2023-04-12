@@ -1,0 +1,14 @@
+name: Synchronize PR environment
+
+on:
+  pull_request:
+    types:
+      - synchronize
+
+jobs:
+  pr-env-sync:
+    name: Synchronize PR environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Synchronize PR environment
+        run: 'echo "Synchronize PR environment: pr-${{ github.event.number }}"'

@@ -1,0 +1,14 @@
+name: Destroy PR environment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  pr-env-create:
+    name: Destroy PR environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Destroy PR environment
+        run: 'echo "Destroy PR environment: pr-${{ github.event.number }}"'

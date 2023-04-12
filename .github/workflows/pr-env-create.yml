@@ -1,0 +1,15 @@
+name: Create PR environment
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+
+jobs:
+  pr-env-create:
+    name: Create PR environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR environment
+        run: 'echo "Create PR environment: pr-${{ github.event.number }}"'
