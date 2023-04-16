@@ -1,0 +1,42 @@
+name: Comment
+description: Comment on a PR with the deployment URL
+
+inputs:
+  URL:
+    required: true
+    description: The URL where the PR is deployed
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          const comments = await github.paginate(
+            github.rest.issues.listComments.endpoint({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+          );
+          const comment = comments.find((comment) =>
+              comment.user.login === "github-actions[bot]" &&
+              comment.body.startsWith("This PR is deployed to")
+          );
+          const body = "This PR is deployed to ${{ inputs.URL }}";
+
+          if (comment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: comment.id,
+              body: body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+          }

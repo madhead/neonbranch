@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # CDK requires a file to construct the stack
+      - run: touch lambda/neonbranch.zip
+
       - uses: ./.github/actions/destroy
         name: Destroy
         with:
