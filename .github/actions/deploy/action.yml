@@ -1,0 +1,83 @@
+name: Deploy
+description: Deploy the lambda
+
+inputs:
+  environment:
+    required: false
+    description: The environment to deploy to
+  role:
+    required: true
+    description: IAM role to assume for deployment
+  region:
+    required: true
+    description: AWS region to deploy to
+
+outputs:
+  URL:
+    value: ${{ steps.URL.outputs.URL }}
+    description: The URL of the environment
+
+runs:
+  using: composite
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ inputs.role }}
+        aws-region: ${{ inputs.region }}
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - run: python -m venv .venv
+      working-directory: deploy
+      shell: bash
+
+    - run: |
+        source .venv/bin/activate
+        python -m pip install -r requirements.txt
+      working-directory: deploy
+      shell: bash
+
+    - run: |
+        source .venv/bin/activate
+        npx cdk deploy --context environment=${{ inputs.environment }} --outputs-file=cdk.out/outputs.json --require-approval=never
+      working-directory: deploy
+      shell: bash
+
+    - id: URL
+      run: echo "URL=$(jq -r 'keys[] as $stack | .[$stack].URL' cdk.out/outputs.json)" >> $GITHUB_OUTPUT
+      working-directory: deploy
+      shell: bash
+
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          const comments = await github.paginate(
+            github.rest.issues.listComments.endpoint({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+          );
+          const comment = comments.find((comment) =>
+              comment.user.login === "github-actions[bot]" &&
+              comment.body.startsWith("This PR is deployed to")
+          );
+          const body = "This PR is deployed to ${{ steps.URL.outputs.URL }}";
+
+          if (comment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: comment.id,
+              body: body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+          }

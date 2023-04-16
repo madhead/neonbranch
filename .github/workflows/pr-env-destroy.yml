@@ -5,10 +5,20 @@ on:
     types:
       - closed
 
+permissions:
+  id-token: write
+  deployments: write
+
 jobs:
   pr-env-create:
     name: Destroy PR environment
     runs-on: ubuntu-latest
     steps:
-      - name: Destroy PR environment
-        run: 'echo "Destroy PR environment: pr-${{ github.event.number }}"'
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/destroy
+        name: Destroy
+        with:
+          environment: pr-${{ github.event.number }}
+          role: ${{ secrets.AWS_ROLE }}
+          region: ${{ vars.AWS_REGION }}
