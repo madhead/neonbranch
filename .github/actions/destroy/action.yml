@@ -1,0 +1,50 @@
+name: Destroy
+description: Destroy the preview environment
+
+inputs:
+  environment:
+    required: true
+    description: The environment to destroy
+  role:
+    required: true
+    description: IAM role to assume for deployment
+  region:
+    required: true
+    description: AWS region to deploy to
+
+runs:
+  using: composite
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ inputs.role }}
+        aws-region: ${{ inputs.region }}
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - run: python -m venv .venv
+      working-directory: deploy
+      shell: bash
+
+    - run: |
+        source .venv/bin/activate
+        python -m pip install -r requirements.txt
+      working-directory: deploy
+      shell: bash
+
+    - run: |
+        source .venv/bin/activate
+        npx cdk destroy --context environment=${{ inputs.environment }} --require-approval=never
+      working-directory: deploy
+      shell: bash
+
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          await github.rest.repos.deleteAnEnvironment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            environment_name: "${{ inputs.environment }}"
+          });

@@ -5,10 +5,29 @@ on:
     types:
       - synchronize
 
+permissions:
+  id-token: write
+  pull-requests: write
+
 jobs:
   pr-env-sync:
     name: Synchronize PR environment
     runs-on: ubuntu-latest
+    environment:
+      name: pr-${{ github.event.number }}
+      url: ${{ steps.deploy.outputs.URL }}
     steps:
-      - name: Synchronize PR environment
-        run: 'echo "Synchronize PR environment: pr-${{ github.event.number }}"'
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/build
+        name: Build
+        with:
+          environment: pr-${{ github.event.number }}
+
+      - id: deploy
+        uses: ./.github/actions/deploy
+        name: Deploy
+        with:
+          environment: pr-${{ github.event.number }}
+          role: ${{ secrets.AWS_ROLE }}
+          region: ${{ vars.AWS_REGION }}

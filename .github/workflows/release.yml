@@ -5,10 +5,25 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.URL }}
     steps:
-      - name: Release
-        run: 'echo "Release"'
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/build
+        name: Build
+
+      - id: deploy
+        uses: ./.github/actions/deploy
+        name: Deploy
+        with:
+          role: ${{ secrets.AWS_ROLE }}
+          region: ${{ vars.AWS_REGION }}
