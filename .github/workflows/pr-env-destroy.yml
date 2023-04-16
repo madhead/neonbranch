@@ -25,3 +25,4 @@ jobs:
           environment: pr-${{ github.event.number }}
           role: ${{ secrets.AWS_ROLE }}
           region: ${{ vars.AWS_REGION }}
+          token: ${{ secrets.ENVIRONMENTS_MANAGER_TOKEN }}
