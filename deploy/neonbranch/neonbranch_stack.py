@@ -13,7 +13,7 @@ class NeonbranchStack(Stack):
         function_neonbranch = lmbda.Function(
             scope=self,
             id="neonbranch",
-            function_name="neonbranch",
+            function_name=self.__resource_name("neonbranch"),
             architecture=lmbda.Architecture.ARM_64,
             runtime=lmbda.Runtime.PYTHON_3_9,
             code=lmbda.Code.from_asset(
@@ -28,6 +28,16 @@ class NeonbranchStack(Stack):
 
         CfnOutput(
             scope=self,
-            id="url",
+            id="URL",
             value=function_neonbranch_url.url,
         )
+
+    def __resource_name(self, resource_name: str) -> str:
+        environment = self.node.try_get_context("environment")
+
+        if environment:
+            environment = f"-{environment}"
+        else:
+            environment = ""
+
+        return f"{resource_name}{environment}"
