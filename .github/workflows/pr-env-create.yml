@@ -32,3 +32,8 @@ jobs:
           environment: pr-${{ github.event.number }}
           role: ${{ secrets.AWS_ROLE }}
           region: ${{ vars.AWS_REGION }}
+
+      - uses: ./.github/actions/comment
+        name: Comment
+        with:
+          URL: ${{ steps.deploy.outputs.URL }}
