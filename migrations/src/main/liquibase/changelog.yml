@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: madhead
+      changes:
+        - sqlFile:
+            path: ../sql/rules.up.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: ../sql/rules.down.sql
+            relativeToChangelogFile: true

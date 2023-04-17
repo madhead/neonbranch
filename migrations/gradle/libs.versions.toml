@@ -1,0 +1,14 @@
+[versions]
+liquibase-plugin = "2.2.0"
+liquibase = "4.21.1"
+picocli = "4.7.2"
+postgresql = "42.6.0"
+
+[plugins]
+liquibase = { id = "org.liquibase.gradle", version.ref = "liquibase-plugin" }
+
+[libraries]
+liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+
