@@ -6,6 +6,7 @@ authors = ["madhead <siarhei.krukau@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+psycopg = {version = "^3.1.8", extras = ["binary"]}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,0 +1,21 @@
+= Lambda
+
+This directory contains the source code for the demo Lambda function.
+
+== How to build
+
+The Lambda function in this project is configured to run on AWS Graviton, i.e. ARM architecture.
+The `psycopg` package, in turn, depends on the `libpq` library, which is platform-specific.
+These two facts make it difficult to build the function in a cross-platform way.
+
+The https://stackoverflow.com/q/76048534/750510[easiest way] to do that is to use Docker:
+
+[source,bash]
+----
+docker-compose up # Build the builder container. May take a while
+
+docker-compose run builder make clean
+docker-compose run builder make neonbranch.zip # Build the function
+----
+
+Make sure to satisfy the prerequisites (like installing the QEMU) listed in the https://docs.docker.com/build/building/multi-platform[Multi-platform images].

@@ -1,0 +1,13 @@
+= Migrations
+
+This directory contains DB migrations in https://liquibase.org[Liquibase] format, managed with https://github.com/liquibase/liquibase-gradle-plugin[Gradle pliugin].
+
+To run them, set the following environment variables:
+
+* `NEON_HOST`
+* `NEON_DATABASE`
+* `NEON_USER`
+* `NEON_PASSWORD`
+
+After all set, just run: `./gradlew update`.
+
