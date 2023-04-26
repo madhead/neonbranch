@@ -41,7 +41,24 @@ runs:
 
     - run: |
         source .venv/bin/activate
-        npx cdk deploy --context environment=${{ inputs.environment }} --outputs-file=cdk.out/outputs.json --require-approval=never
+        python branch.py
+      working-directory: deploy
+      shell: bash
+      env:
+        NEON_TOKEN: ${{ secrets.NEON_TOKEN }}
+        NEON_PROJECT: ${{ vars.NEON_PROJECT }}
+        NEON_BRANCH: ${{ inputs.environment }}
+
+    - run: |
+        source .venv/bin/activate
+        npx cdk deploy \
+        --context environment=${{ inputs.environment }} \
+        --context DATABASE_HOST=XXX \
+        --context DATABASE_DATABASE=XXX \
+        --context DATABASE_USER=XXX \
+        --context DATABASE_PASSWORD=XXX \
+        --outputs-file=cdk.out/outputs.json \
+        --require-approval=never
       working-directory: deploy
       shell: bash
 

@@ -3,6 +3,9 @@
 This directory contains https://aws.amazon.com/cdk[AWS CDK] scripts for deploying.
 The language of choice is https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-python.html[Python].
 
+There is also a non-CDK link:branch.py[`branch.py`] script for https://neon.tech/docs/introduction/branching[NeonDB branching].
+It's here for the sake of simplicity: branching logic benefits of an eloquent language like Python, but I was too lazy to extract it in a separate subproject in this repository.
+
 == Useful commands
 
 * `cdk ls`          list all stacks in the app
