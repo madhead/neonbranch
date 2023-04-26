@@ -11,11 +11,29 @@ inputs:
   region:
     required: true
     description: AWS region to deploy to
+  neon_project:
+    required: true
+    description: Neon project name
+  neon_database:
+    required: true
+    description: Neon database name
+  neon_token:
+    required: true
+    description: Neon API token
 
 outputs:
   URL:
     value: ${{ steps.URL.outputs.URL }}
     description: The URL of the environment
+  db_host:
+    value: ${{ steps.branch.outputs.db_host }}
+    description: NeonDB branch host
+  db_user:
+    value: ${{ steps.branch.outputs.db_user }}
+    description: NeonDB branch user
+  db_password:
+    value: ${{ steps.branch.outputs.db_password }}
+    description: NeonDB branch password
 
 runs:
   using: composite
@@ -39,9 +57,40 @@ runs:
       working-directory: deploy
       shell: bash
 
+    - id: branch
+      run: |
+        source .venv/bin/activate
+        python branch.py
+      working-directory: deploy
+      shell: bash
+      env:
+        NEON_TOKEN: ${{ inputs.neon_token }}
+        NEON_PROJECT: ${{ inputs.neon_project }}
+        NEON_BRANCH: ${{ inputs.environment }}
+
+    - uses: actions/setup-java@v3
+      with:
+        distribution: "temurin"
+        java-version: 17
+    - run: ./gradlew update
+      working-directory: migrations
+      shell: bash
+      env:
+        NEON_HOST: ${{ steps.branch.outputs.db_host }}
+        NEON_DATABASE: ${{ inputs.neon_database }}
+        NEON_USER: ${{ steps.branch.outputs.db_user }}
+        NEON_PASSWORD: ${{ steps.branch.outputs.db_password }}
+
     - run: |
         source .venv/bin/activate
-        npx cdk deploy --context environment=${{ inputs.environment }} --outputs-file=cdk.out/outputs.json --require-approval=never
+        npx cdk deploy \
+        --context environment=${{ inputs.environment }} \
+        --context DATABASE_HOST=${{ steps.branch.outputs.db_host }} \
+        --context DATABASE_DATABASE=${{ inputs.neon_database }} \
+        --context DATABASE_USER=${{ steps.branch.outputs.db_user }} \
+        --context DATABASE_PASSWORD=${{ steps.branch.outputs.db_password }} \
+        --outputs-file=cdk.out/outputs.json \
+        --require-approval=never
       working-directory: deploy
       shell: bash
 
