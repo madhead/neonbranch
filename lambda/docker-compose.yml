@@ -1,0 +1,7 @@
+services:
+  builder:
+    platform: linux/arm64
+    build: .
+    volumes:
+      - ./:/lambda
+    working_dir: /lambda

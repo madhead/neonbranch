@@ -39,6 +39,16 @@ runs:
 
     - run: |
         source .venv/bin/activate
+        python unbranch.py
+      working-directory: deploy
+      shell: bash
+      env:
+        NEON_TOKEN: ${{ inputs.neon_token }}
+        NEON_PROJECT: ${{ inputs.neon_project }}
+        NEON_BRANCH: ${{ inputs.environment }}
+
+    - run: |
+        source .venv/bin/activate
         npx cdk destroy --context environment=${{ inputs.environment }} --force
       working-directory: deploy
       shell: bash

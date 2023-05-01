@@ -1,3 +1,4 @@
+import aws_cdk
 from aws_cdk import (
     CfnOutput,
     Stack,
@@ -20,6 +21,13 @@ class NeonbranchStack(Stack):
                 path="../lambda/neonbranch.zip"
             ),
             handler="lambda.neonbranch.handle",
+            environment={
+                "DATABASE_HOST": self.node.try_get_context("DATABASE_HOST"),
+                "DATABASE_DATABASE": self.node.try_get_context("DATABASE_DATABASE"),
+                "DATABASE_USER": self.node.try_get_context("DATABASE_USER"),
+                "DATABASE_PASSWORD": self.node.try_get_context("DATABASE_PASSWORD"),
+            },
+            timeout=aws_cdk.Duration.seconds(10),
         )
 
         function_neonbranch_url = function_neonbranch.add_function_url(

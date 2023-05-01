@@ -9,25 +9,15 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v4
+    - uses: docker/setup-qemu-action@v2
       with:
-        python-version: 3.9
-
-    - uses: abatilo/actions-poetry@v2
+        platforms: 'arm64'
 
     - run: echo "env = '${{ inputs.environment }}'" >> lambda/__init__.py
       if: inputs.environment != ''
       working-directory: lambda
       shell: bash
 
-    - run: poetry build
+    - run: docker-compose run builder make neonbranch.zip
       working-directory: lambda
-      shell: bash
-
-    - run: poetry run pip install --upgrade --target package dist/*.whl
-      working-directory: lambda
-      shell: bash
-
-    - run: zip -r ../neonbranch.zip . -x '*.pyc'
-      working-directory: lambda/package
       shell: bash
