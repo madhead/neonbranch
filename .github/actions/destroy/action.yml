@@ -14,6 +14,12 @@ inputs:
   token:
     required: true
     description: GitHub token to use for deleting the environment
+  neon_project:
+    required: true
+    description: Neon project name
+  neon_token:
+    required: true
+    description: Neon API token
 
 runs:
   using: composite
