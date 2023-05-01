@@ -55,7 +55,13 @@ runs:
 
     - run: |
         source .venv/bin/activate
-        npx cdk destroy --context environment=${{ inputs.environment }} --force
+        npx cdk destroy \
+        --context environment=${{ inputs.environment }} \
+        --context DATABASE_HOST=${{ steps.branch.outputs.db_host }} \
+        --context DATABASE_DATABASE=${{ inputs.neon_database }} \
+        --context DATABASE_USER=${{ steps.branch.outputs.db_user }} \
+        --context DATABASE_PASSWORD=${{ steps.branch.outputs.db_password }} \
+        --force
       working-directory: deploy
       shell: bash
 
