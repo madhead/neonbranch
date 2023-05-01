@@ -11,6 +11,12 @@ inputs:
   region:
     required: true
     description: AWS region to deploy to
+  neon_project:
+    required: true
+    description: Neon project name
+  neon_token:
+    required: true
+    description: Neon API token
 
 outputs:
   URL:
@@ -45,22 +51,22 @@ runs:
       working-directory: deploy
       shell: bash
       env:
-        NEON_TOKEN: ${{ secrets.NEON_TOKEN }}
-        NEON_PROJECT: ${{ vars.NEON_PROJECT }}
+        NEON_TOKEN: ${{ inputs.neon_token }}
+        NEON_PROJECT: ${{ inputs.neon_project }}
         NEON_BRANCH: ${{ inputs.environment }}
 
-    - run: |
-        source .venv/bin/activate
-        npx cdk deploy \
-        --context environment=${{ inputs.environment }} \
-        --context DATABASE_HOST=XXX \
-        --context DATABASE_DATABASE=XXX \
-        --context DATABASE_USER=XXX \
-        --context DATABASE_PASSWORD=XXX \
-        --outputs-file=cdk.out/outputs.json \
-        --require-approval=never
-      working-directory: deploy
-      shell: bash
+    # - run: |
+    #     source .venv/bin/activate
+    #     npx cdk deploy \
+    #     --context environment=${{ inputs.environment }} \
+    #     --context DATABASE_HOST=XXX \
+    #     --context DATABASE_DATABASE=XXX \
+    #     --context DATABASE_USER=XXX \
+    #     --context DATABASE_PASSWORD=XXX \
+    #     --outputs-file=cdk.out/outputs.json \
+    #     --require-approval=never
+    #   working-directory: deploy
+    #   shell: bash
 
     - id: URL
       run: echo "URL=$(jq -r 'keys[] as $stack | .[$stack].URL' cdk.out/outputs.json)" >> $GITHUB_OUTPUT
