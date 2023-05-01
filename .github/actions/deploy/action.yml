@@ -14,6 +14,9 @@ inputs:
   neon_project:
     required: true
     description: Neon project name
+  neon_database:
+    required: true
+    description: Neon database name
   neon_token:
     required: true
     description: Neon API token
@@ -65,14 +68,31 @@ runs:
         NEON_PROJECT: ${{ inputs.neon_project }}
         NEON_BRANCH: ${{ inputs.environment }}
 
+    - uses: actions/setup-python@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+    - uses: gradle/wrapper-validation-action@v1
+      working-directory: migrations
+    - uses: gradle/gradle-build-action@v2
+      working-directory: migrations
+      with:
+        arguments: update
+        cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      env:
+        NEON_HOST: ${{ steps.branch.outputs.db_host }}
+        NEON_DATABASE: ${{ inputs.neon_database }}
+        NEON_USER: ${{ steps.branch.outputs.db_user }}
+        NEON_PASSWORD: ${{ steps.branch.outputs.db_password }}
+
     # - run: |
     #     source .venv/bin/activate
     #     npx cdk deploy \
     #     --context environment=${{ inputs.environment }} \
-    #     --context DATABASE_HOST=XXX \
-    #     --context DATABASE_DATABASE=XXX \
-    #     --context DATABASE_USER=XXX \
-    #     --context DATABASE_PASSWORD=XXX \
+    #     --context DATABASE_HOST=${{ steps.branch.outputs.db_host }} \
+    #     --context DATABASE_DATABASE=${{ inputs.neon_database }} \
+    #     --context DATABASE_USER=${{ steps.branch.outputs.db_user }} \
+    #     --context DATABASE_PASSWORD=${{ steps.branch.outputs.db_password }} \
     #     --outputs-file=cdk.out/outputs.json \
     #     --require-approval=never
     #   working-directory: deploy

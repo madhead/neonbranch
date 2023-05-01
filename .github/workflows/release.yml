@@ -28,4 +28,5 @@ jobs:
           role: ${{ secrets.AWS_ROLE }}
           region: ${{ vars.AWS_REGION }}
           neon_project: ${{ vars.NEON_PROJECT }}
+          neon_database: ${{ vars.NEON_DATABASE }}
           neon_token: ${{ secrets.NEON_TOKEN }}
