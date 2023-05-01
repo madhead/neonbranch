@@ -71,6 +71,7 @@ def create_branch(project: dict, parent: dict, name: str) -> dict:
 if __name__ == '__main__':
     print("NEON_BRANCH:")
     print(os.environ['NEON_BRANCH'])
+    print(bool(os.environ['NEON_BRANCH']))
 
     project = find_project(os.environ['NEON_PROJECT'])
     primary_branch, branch = find_branches(project,
