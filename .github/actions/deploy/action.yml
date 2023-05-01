@@ -81,18 +81,18 @@ runs:
         NEON_USER: ${{ steps.branch.outputs.db_user }}
         NEON_PASSWORD: ${{ steps.branch.outputs.db_password }}
 
-    # - run: |
-    #     source .venv/bin/activate
-    #     npx cdk deploy \
-    #     --context environment=${{ inputs.environment }} \
-    #     --context DATABASE_HOST=${{ steps.branch.outputs.db_host }} \
-    #     --context DATABASE_DATABASE=${{ inputs.neon_database }} \
-    #     --context DATABASE_USER=${{ steps.branch.outputs.db_user }} \
-    #     --context DATABASE_PASSWORD=${{ steps.branch.outputs.db_password }} \
-    #     --outputs-file=cdk.out/outputs.json \
-    #     --require-approval=never
-    #   working-directory: deploy
-    #   shell: bash
+    - run: |
+        source .venv/bin/activate
+        npx cdk deploy \
+        --context environment=${{ inputs.environment }} \
+        --context DATABASE_HOST=${{ steps.branch.outputs.db_host }} \
+        --context DATABASE_DATABASE=${{ inputs.neon_database }} \
+        --context DATABASE_USER=${{ steps.branch.outputs.db_user }} \
+        --context DATABASE_PASSWORD=${{ steps.branch.outputs.db_password }} \
+        --outputs-file=cdk.out/outputs.json \
+        --require-approval=never
+      working-directory: deploy
+      shell: bash
 
     - id: URL
       run: echo "URL=$(jq -r 'keys[] as $stack | .[$stack].URL' cdk.out/outputs.json)" >> $GITHUB_OUTPUT
