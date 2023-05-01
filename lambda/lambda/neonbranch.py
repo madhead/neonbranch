@@ -36,6 +36,7 @@ def handle(event: dict, context):
         }
 
     winner = row[2]
+    description = row[3]
 
     return {
         "statusCode": 200,
@@ -46,5 +47,6 @@ def handle(event: dict, context):
             "player_1": player_1,
             "player_2": player_2,
             "winner": winner,
+            "description": description,
         }),
     }

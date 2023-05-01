@@ -10,3 +10,14 @@ databaseChangeLog:
         - sqlFile:
             path: ../sql/rules.down.sql
             relativeToChangelogFile: true
+  - changeSet:
+      id: 2
+      author: madhead
+      changes:
+        - sqlFile:
+            path: ../sql/descriptions.up.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: ../sql/descriptions.down.sql
+            relativeToChangelogFile: true
