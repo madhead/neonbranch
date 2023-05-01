@@ -28,7 +28,7 @@ jobs:
         uses: ./.github/actions/deploy
         name: Deploy
         with:
-          # environment: pr-${{ github.event.number }}
+          environment: pr-${{ github.event.number }}
           role: ${{ secrets.AWS_ROLE }}
           region: ${{ vars.AWS_REGION }}
           neon_project: ${{ vars.NEON_PROJECT }}

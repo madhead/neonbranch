@@ -22,6 +22,15 @@ outputs:
   URL:
     value: ${{ steps.URL.outputs.URL }}
     description: The URL of the environment
+  db_host:
+    value: ${{ steps.branch.outputs.db_host }}
+    description: NeonDB branch host
+  db_user:
+    value: ${{ steps.branch.outputs.db_user }}
+    description: NeonDB branch user
+  db_password:
+    value: ${{ steps.branch.outputs.db_password }}
+    description: NeonDB branch password
 
 runs:
   using: composite
@@ -45,7 +54,8 @@ runs:
       working-directory: deploy
       shell: bash
 
-    - run: |
+    - id: branch
+      run: |
         source .venv/bin/activate
         python branch.py
       working-directory: deploy
